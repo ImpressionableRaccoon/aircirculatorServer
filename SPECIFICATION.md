@@ -122,8 +122,10 @@ Content-Length: 0
     ...
     
     {
+        "id": "900e92e8-b8ba-41e2-9c6a-4bc38665de29",
         "login": "alex",
-        "is_admin": false
+        "is_admin": false,
+        "last_online" : "2023-01-01 12:30:00"
     }
     ```
 
