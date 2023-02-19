@@ -8,6 +8,7 @@ import (
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/handlers"
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/middlewares"
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/routers"
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/service"
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/storage"
 )
 
@@ -16,10 +17,12 @@ func main() {
 
 	cfg := configs.NewConfig()
 
-	s, err := storage.NewPsqlStorage(cfg)
+	st, err := storage.NewPsqlStorage(cfg)
 	if err != nil {
 		panic(err)
 	}
+
+	s := service.NewService(st, cfg)
 
 	h := handlers.NewHandler(s, cfg)
 

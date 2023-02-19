@@ -6,17 +6,17 @@ import (
 	"net/http"
 
 	"github.com/ImpressionableRaccoon/aircirculatorServer/configs"
-	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/storage"
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/service"
 )
 
 type Handler struct {
-	st  *storage.PsqlStorage
+	s   *service.Service
 	cfg *configs.Config
 }
 
-func NewHandler(s *storage.PsqlStorage, cfg *configs.Config) *Handler {
+func NewHandler(s *service.Service, cfg *configs.Config) *Handler {
 	h := &Handler{
-		st:  s,
+		s:   s,
 		cfg: cfg,
 	}
 
@@ -24,13 +24,32 @@ func NewHandler(s *storage.PsqlStorage, cfg *configs.Config) *Handler {
 }
 
 func (h *Handler) httpJSONError(w http.ResponseWriter, error string, code int) {
-	jsonError, _ := json.Marshal(struct {
-		Error string `json:"error"`
-	}{error})
+	body, _ := json.Marshal(struct {
+		Status string `json:"status"`
+		Error  string `json:"error"`
+	}{
+		Status: "error",
+		Error:  error,
+	})
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(code)
-	_, err := w.Write(jsonError)
+	_, err := w.Write(body)
+	if err != nil {
+		log.Printf("write failed: %v", err)
+	}
+}
+
+func (h *Handler) httpJSONStatusOK(w http.ResponseWriter, code int) {
+	body, _ := json.Marshal(struct {
+		Status string `json:"status"`
+	}{
+		Status: "ok",
+	})
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(code)
+	_, err := w.Write(body)
 	if err != nil {
 		log.Printf("write failed: %v", err)
 	}

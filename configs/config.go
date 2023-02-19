@@ -3,16 +3,23 @@ package configs
 import (
 	"flag"
 	"os"
+	"time"
 )
 
 type Config struct {
-	ServerAddress string
-	DatabaseDSN   string
+	ServerAddress   string
+	DatabaseDSN     string
+	PasswordSalt    string
+	TokenTTL        time.Duration
+	TokenSigningKey []byte
 }
 
 func NewConfig() *Config {
 	cfg := &Config{
-		ServerAddress: ":8080",
+		ServerAddress:   ":8080",
+		PasswordSalt:    "juaT9OLosPlhUhDj",
+		TokenTTL:        time.Hour * 12,
+		TokenSigningKey: []byte("qYqx2APnPhDHBl2AW3OjUYeWWFAtzF7d"),
 	}
 
 	loadEnv(cfg)
