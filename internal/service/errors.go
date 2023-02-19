@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	ErrUnauthorized         error = errors.New("unauthorized")
-	ErrInvalidSigningMethod error = errors.New("invalid signing method")
-	ErrWrongTokenClaimsType error = errors.New("wrong token claims type")
+	ErrUnauthorized         = errors.New("unauthorized")
+	ErrInvalidSigningMethod = errors.New("invalid signing method")
+	ErrWrongTokenClaimsType = errors.New("wrong token claims type")
 )

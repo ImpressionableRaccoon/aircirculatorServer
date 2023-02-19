@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	ErrWrongValueType error = errors.New("wrong value type")
+	ErrWrongValueType = errors.New("wrong value type")
 )
 
 func getUser(r *http.Request) (user storage.User, err error) {

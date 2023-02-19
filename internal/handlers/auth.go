@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,7 +18,7 @@ type AuthRequest struct {
 func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 	b, err := io.ReadAll(r.Body)
 	if err != nil || len(b) == 0 {
-		h.HttpJSONError(w, "Bad request", http.StatusBadRequest)
+		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
@@ -25,28 +26,28 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	err = json.Unmarshal(b, &request)
 	if err != nil {
-		h.HttpJSONError(w, "Bad request", http.StatusBadRequest)
+		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
 	token, err := h.s.SignUp(r.Context(), request.Login, request.Password)
-	if err == storage.ErrUserAlreadyExists {
-		h.HttpJSONError(w, err.Error(), http.StatusConflict)
+	if errors.Is(err, storage.ErrUserAlreadyExists) {
+		h.HTTPJSONError(w, err.Error(), http.StatusConflict)
 		return
 	}
 	if err != nil {
-		h.HttpJSONError(w, err.Error(), http.StatusInternalServerError)
+		h.HTTPJSONError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	h.HttpJSONStatusOK(w, 201)
+	h.HTTPJSONStatusOK(w, 201)
 }
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 	b, err := io.ReadAll(r.Body)
 	if err != nil || len(b) == 0 {
-		h.HttpJSONError(w, "Bad request", http.StatusBadRequest)
+		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
@@ -54,20 +55,20 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	err = json.Unmarshal(b, &request)
 	if err != nil {
-		h.HttpJSONError(w, "Bad request", http.StatusBadRequest)
+		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
 	token, err := h.s.SignIn(r.Context(), request.Login, request.Password)
-	if err == storage.ErrUnauthorized {
-		h.HttpJSONError(w, err.Error(), http.StatusUnauthorized)
+	if errors.Is(err, storage.ErrUnauthorized) {
+		h.HTTPJSONError(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 	if err != nil {
-		h.HttpJSONError(w, err.Error(), http.StatusInternalServerError)
+		h.HTTPJSONError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	h.HttpJSONStatusOK(w, 200)
+	h.HTTPJSONStatusOK(w, 200)
 }

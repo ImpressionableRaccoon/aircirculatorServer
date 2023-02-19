@@ -32,6 +32,9 @@ func (s *Service) SignUp(ctx context.Context, login string, password string) (to
 
 func (s *Service) SignIn(ctx context.Context, login string, password string) (token string, err error) {
 	user, err := s.st.GetUserByLogin(ctx, login)
+	if err != nil {
+		return "", err
+	}
 
 	ok := utils.CheckPassword(user.PasswordHash, password, s.cfg.PasswordSalt, user.PasswordSalt)
 	if !ok {

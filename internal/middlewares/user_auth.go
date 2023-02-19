@@ -12,13 +12,13 @@ func (m *Middlewares) UserAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorization := r.Header.Get("Authorization")
 		if authorization == "" {
-			m.h.HttpJSONError(w, "empty authorization header", http.StatusUnauthorized)
+			m.h.HTTPJSONError(w, "empty authorization header", http.StatusUnauthorized)
 			return
 		}
 
 		splitted := strings.Split(authorization, " ")
 		if len(splitted) != 2 {
-			m.h.HttpJSONError(w, "invalid authorization header", http.StatusUnauthorized)
+			m.h.HTTPJSONError(w, "invalid authorization header", http.StatusUnauthorized)
 			return
 		}
 
@@ -26,7 +26,7 @@ func (m *Middlewares) UserAuth(next http.Handler) http.Handler {
 
 		user, err := m.s.ParseToken(r.Context(), token)
 		if err != nil {
-			m.h.HttpJSONError(w, err.Error(), http.StatusUnauthorized)
+			m.h.HTTPJSONError(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 

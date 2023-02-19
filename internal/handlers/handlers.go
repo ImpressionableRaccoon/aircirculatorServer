@@ -23,7 +23,7 @@ func NewHandler(s *service.Service, cfg *configs.Config) *Handler {
 	return h
 }
 
-func (h *Handler) HttpJSONError(w http.ResponseWriter, error string, code int) {
+func (h *Handler) HTTPJSONError(w http.ResponseWriter, error string, code int) {
 	body, _ := json.Marshal(struct {
 		Status string `json:"status"`
 		Error  string `json:"error"`
@@ -40,7 +40,7 @@ func (h *Handler) HttpJSONError(w http.ResponseWriter, error string, code int) {
 	}
 }
 
-func (h *Handler) HttpJSONStatusOK(w http.ResponseWriter, code int) {
+func (h *Handler) HTTPJSONStatusOK(w http.ResponseWriter, code int) {
 	body, _ := json.Marshal(struct {
 		Status string `json:"status"`
 	}{
