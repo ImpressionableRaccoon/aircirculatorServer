@@ -7,12 +7,12 @@ import (
 )
 
 type User struct {
-	ID           uuid.UUID
-	PasswordHash []byte
-	PasswordSalt string
-	Login        string
-	IsAdmin      bool
-	LastOnline   time.Time
+	ID           uuid.UUID `json:"id"`
+	PasswordHash []byte    `json:"-"`
+	PasswordSalt string    `json:"-"`
+	Login        string    `json:"login"`
+	IsAdmin      bool      `json:"is_admin"`
+	LastOnline   time.Time `json:"last_online"`
 }
 
 type Company struct {

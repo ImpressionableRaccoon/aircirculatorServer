@@ -31,7 +31,7 @@ func (s *Service) SignUp(ctx context.Context, login string, password string) (to
 }
 
 func (s *Service) SignIn(ctx context.Context, login string, password string) (token string, err error) {
-	user, err := s.st.GetUser(ctx, login)
+	user, err := s.st.GetUserByLogin(ctx, login)
 
 	ok := utils.CheckPassword(user.PasswordHash, password, s.cfg.PasswordSalt, user.PasswordSalt)
 	if !ok {
@@ -47,4 +47,29 @@ func (s *Service) SignIn(ctx context.Context, login string, password string) (to
 	})
 
 	return t.SignedString(s.cfg.TokenSigningKey)
+}
+
+func (s *Service) ParseToken(ctx context.Context, bearer string) (user storage.User, err error) {
+	token, err := jwt.ParseWithClaims(bearer, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, ErrInvalidSigningMethod
+		}
+
+		return s.cfg.TokenSigningKey, nil
+	})
+	if err != nil {
+		return
+	}
+
+	claims, ok := token.Claims.(*tokenClaims)
+	if !ok {
+		return storage.User{}, ErrWrongTokenClaimsType
+	}
+
+	user, err = s.st.GetUserByID(ctx, claims.UserID)
+	if err != nil {
+		return storage.User{}, ErrUnauthorized
+	}
+
+	return
 }

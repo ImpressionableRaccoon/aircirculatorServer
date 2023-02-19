@@ -26,7 +26,7 @@ func main() {
 
 	h := handlers.NewHandler(s, cfg)
 
-	m := middlewares.NewMiddlewares(cfg)
+	m := middlewares.NewMiddlewares(s, h, cfg)
 
 	r := routers.NewRouter(h, m)
 

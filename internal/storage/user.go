@@ -3,6 +3,8 @@ package storage
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func (st *PsqlStorage) SignUp(ctx context.Context, login string, hash []byte, salt string) error {
@@ -23,7 +25,17 @@ func (st *PsqlStorage) SignUp(ctx context.Context, login string, hash []byte, sa
 	return nil
 }
 
-func (st *PsqlStorage) GetUser(ctx context.Context, login string) (user User, err error) {
+func (st *PsqlStorage) GetUserByID(ctx context.Context, id uuid.UUID) (user User, err error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	row := st.db.QueryRow(ctx,
+		"SELECT id, login, password_hash, password_salt, is_admin, last_online FROM users WHERE id = $1", id)
+	err = row.Scan(&user.ID, &user.Login, &user.PasswordHash, &user.PasswordSalt, &user.IsAdmin, &user.LastOnline)
+	return
+}
+
+func (st *PsqlStorage) GetUserByLogin(ctx context.Context, login string) (user User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
