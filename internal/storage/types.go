@@ -3,6 +3,8 @@ package storage
 import (
 	"time"
 
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/utils"
+
 	"github.com/google/uuid"
 )
 
@@ -16,10 +18,10 @@ type User struct {
 }
 
 type Company struct {
-	ID         uuid.UUID
-	Owner      uuid.UUID
-	Name       string
-	TimeOffset time.Duration
+	ID         uuid.UUID    `json:"id"`
+	Owner      uuid.UUID    `json:"owner_id"`
+	Name       string       `json:"name"`
+	TimeOffset utils.Offset `json:"time_offset"`
 }
 
 type Device struct {

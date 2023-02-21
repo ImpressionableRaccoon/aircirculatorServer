@@ -26,13 +26,13 @@ func NewRouter(h *handlers.Handler, m middlewares.Middlewares) chi.Router {
 
 			r.Get("/user", h.GetUser)
 
-			//r.Get("/company/", nil)
-			//r.Post("/company/", nil)
-			//r.Route("/company/{id}", func(r chi.Router) {
-			//	r.Get("/", nil)
-			//	r.Get("/devices", nil)
-			//})
-			//
+			r.Get("/company", h.GetUserCompanies)
+			r.Post("/company", h.AddCompany)
+			r.Route("/company/{id}", func(r chi.Router) {
+				r.Get("/", h.GetCompany)
+				//r.Get("/devices", nil)
+			})
+
 			//r.Post("/device/", nil)
 			//r.Route("/device/{id}", func(r chi.Router) {
 			//	r.Get("/", nil)

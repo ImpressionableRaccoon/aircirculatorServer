@@ -2,7 +2,10 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"time"
+
+	"github.com/jackc/pgx/v5"
 
 	"github.com/google/uuid"
 )
@@ -30,8 +33,12 @@ func (st *PsqlStorage) GetUserByID(ctx context.Context, id uuid.UUID) (user User
 	defer cancel()
 
 	row := st.db.QueryRow(ctx,
-		"SELECT id, login, password_hash, password_salt, is_admin, last_online FROM users WHERE id = $1", id)
+		"SELECT id, login, password_hash, password_salt, is_admin, last_online FROM users WHERE id = $1",
+		id)
 	err = row.Scan(&user.ID, &user.Login, &user.PasswordHash, &user.PasswordSalt, &user.IsAdmin, &user.LastOnline)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return User{}, ErrUserNotFound
+	}
 	return
 }
 
@@ -40,7 +47,11 @@ func (st *PsqlStorage) GetUserByLogin(ctx context.Context, login string) (user U
 	defer cancel()
 
 	row := st.db.QueryRow(ctx,
-		"SELECT id, login, password_hash, password_salt, is_admin, last_online FROM users WHERE login = $1", login)
+		"SELECT id, login, password_hash, password_salt, is_admin, last_online FROM users WHERE login = $1",
+		login)
 	err = row.Scan(&user.ID, &user.Login, &user.PasswordHash, &user.PasswordSalt, &user.IsAdmin, &user.LastOnline)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return User{}, ErrUserNotFound
+	}
 	return
 }
