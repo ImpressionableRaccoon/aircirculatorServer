@@ -22,3 +22,8 @@ func (s *Service) GetUserCompany(ctx context.Context, user storage.User, company
 	company storage.Company, err error) {
 	return s.st.GetUserCompany(ctx, user, companyID)
 }
+
+func (s *Service) GetCompanyDevices(ctx context.Context, user storage.User, companyID uuid.UUID) (
+	devices []storage.Device, err error) {
+	return s.st.GetCompanyDevices(ctx, user, companyID)
+}

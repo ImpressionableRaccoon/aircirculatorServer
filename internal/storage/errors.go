@@ -11,4 +11,6 @@ var (
 	ErrCompanyAlreadyExists = errors.New("company already exists")
 	ErrCompanyNotFound      = errors.New("company not found")
 	ErrCompanyNoPermissions = errors.New("company exists, but you have not permission to access it")
+	ErrDeviceAlreadyExists  = errors.New("device already exists")
+	ErrDeviceNotFound       = errors.New("device not found")
 )

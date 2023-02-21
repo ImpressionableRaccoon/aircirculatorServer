@@ -30,17 +30,17 @@ func NewRouter(h *handlers.Handler, m middlewares.Middlewares) chi.Router {
 			r.Post("/company", h.AddCompany)
 			r.Route("/company/{id}", func(r chi.Router) {
 				r.Get("/", h.GetCompany)
-				//r.Get("/devices", nil)
+				r.Get("/devices", h.GetCompanyDevices)
 			})
 
-			//r.Post("/device/", nil)
-			//r.Route("/device/{id}", func(r chi.Router) {
-			//	r.Get("/", nil)
-			//	r.Get("/schedule", nil)
-			//	r.Post("/schedule", nil)
-			//	r.Delete("/schedule", nil)
-			//	r.Get("/journal", nil)
-			//})
+			r.Post("/device/", h.AddDevice)
+			r.Route("/device/{id}", func(r chi.Router) {
+				r.Get("/", h.GetDevice)
+				//r.Get("/schedule", nil)
+				//r.Post("/schedule", nil)
+				//r.Delete("/schedule", nil)
+				//r.Get("/journal", nil)
+			})
 		})
 
 		//r.Group(func(r chi.Router) {

@@ -33,11 +33,14 @@ func (st *PsqlStorage) GetUserCompanies(ctx context.Context, user User, ignoreUs
 	for rows.Next() {
 		company := Company{}
 		var d time.Duration
+
 		err = rows.Scan(&company.ID, &company.Owner, &company.Name, &d)
 		if err != nil {
 			return nil, err
 		}
+
 		company.TimeOffset = utils.Offset{Duration: d}
+
 		companies = append(companies, company)
 	}
 
@@ -116,5 +119,44 @@ func (st *PsqlStorage) GetCompanyByID(ctx context.Context, id uuid.UUID) (compan
 	}
 	company.TimeOffset = utils.Offset{Duration: d}
 
-	return company, nil
+	return
+}
+
+func (st *PsqlStorage) GetCompanyDevices(ctx context.Context, user User, id uuid.UUID) (
+	devices []Device, err error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	company, err := st.GetUserCompany(ctx, user, id)
+	if err != nil {
+		return nil, err
+	}
+
+	devices = make([]Device, 0)
+
+	var rows pgx.Rows
+	rows, err = st.db.Query(ctx,
+		"SELECT id, company_id, name, resource, last_online FROM devices WHERE company_id = $1",
+		company.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		device := Device{}
+
+		err = rows.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.LastOnline)
+		if err != nil {
+			return nil, err
+		}
+
+		device.MinutesRemaining, err = st.CalcDeviceMinutesRemaining(ctx, device.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		devices = append(devices, device)
+	}
+
+	return
 }

@@ -25,11 +25,12 @@ type Company struct {
 }
 
 type Device struct {
-	ID         uuid.UUID
-	Company    uuid.UUID
-	Name       string
-	Resource   int
-	LastOnline time.Time
+	ID               uuid.UUID `json:"id"`
+	Company          uuid.UUID `json:"company_id"`
+	Name             string    `json:"name"`
+	Resource         int       `json:"resource"`
+	MinutesRemaining int       `json:"minutes_remaining"`
+	LastOnline       time.Time `json:"last_online"`
 }
 
 type Schedule struct {
