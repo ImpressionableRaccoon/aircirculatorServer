@@ -92,7 +92,7 @@ func (st *PsqlStorage) GetUserCompany(ctx context.Context, user User, id uuid.UU
 	if !exists {
 		return Company{}, ErrCompanyNotFound
 	}
-	if !accessToDevice {
+	if !accessToDevice && !user.IsAdmin {
 		return Company{}, ErrCompanyNoPermissions
 	}
 
