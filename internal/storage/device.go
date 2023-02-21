@@ -17,16 +17,16 @@ type AddedDevice struct {
 
 func (st *PsqlStorage) AddDevice(ctx context.Context, user User, companyID uuid.UUID, name string, resource int) (
 	device AddedDevice, err error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
-
 	company, err := st.GetUserCompany(ctx, user, companyID)
 	if err != nil {
 		return AddedDevice{}, err
 	}
 
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
+
 	var exists bool
-	row := st.db.QueryRow(ctx,
+	row := st.db.QueryRow(timeoutCtx,
 		"SELECT EXISTS (SELECT FROM devices WHERE company_id = $1 AND name = $2)",
 		company.ID, name)
 	err = row.Scan(&exists)
@@ -39,7 +39,7 @@ func (st *PsqlStorage) AddDevice(ctx context.Context, user User, companyID uuid.
 
 	var deviceID uuid.UUID
 	var deviceToken string
-	row = st.db.QueryRow(ctx,
+	row = st.db.QueryRow(timeoutCtx,
 		"INSERT INTO devices (company_id, name, resource) VALUES ($1, $2, $3) RETURNING id, token",
 		companyID, name, resource)
 	err = row.Scan(&deviceID, &deviceToken)
@@ -61,11 +61,11 @@ func (st *PsqlStorage) AddDevice(ctx context.Context, user User, companyID uuid.
 }
 
 func (st *PsqlStorage) GetDevice(ctx context.Context, user User, deviceID uuid.UUID) (device Device, err error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
 
 	var exists, accessToDevice bool
-	row := st.db.QueryRow(ctx,
+	row := st.db.QueryRow(timeoutCtx,
 		`SELECT 
     		EXISTS(SELECT FROM devices WHERE id = $1),
     		EXISTS(SELECT FROM companies WHERE id = (SELECT company_id FROM devices WHERE id = $1) AND owner_id = $2)`,
@@ -86,10 +86,10 @@ func (st *PsqlStorage) GetDevice(ctx context.Context, user User, deviceID uuid.U
 }
 
 func (st *PsqlStorage) GetDeviceByID(ctx context.Context, deviceID uuid.UUID) (device Device, err error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
 
-	row := st.db.QueryRow(ctx,
+	row := st.db.QueryRow(timeoutCtx,
 		"SELECT id, company_id, name, resource, last_online FROM devices WHERE id = $1",
 		deviceID)
 	err = row.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.LastOnline)

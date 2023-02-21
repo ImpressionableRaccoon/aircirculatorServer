@@ -42,7 +42,7 @@ func NewPsqlStorage(cfg *configs.Config) (*PsqlStorage, error) {
 	}
 
 	return st, nil
-} // todo: use another name when create context with timeout in functions
+}
 
 func (st *PsqlStorage) doMigrate(dsn string) error {
 	m, err := migrate.New("file://migrations/postgres", dsn)

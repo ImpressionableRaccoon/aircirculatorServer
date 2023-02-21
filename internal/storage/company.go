@@ -13,16 +13,16 @@ import (
 )
 
 func (st *PsqlStorage) GetUserCompanies(ctx context.Context, user User, ignoreUser bool) (companies []Company, err error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
 
 	companies = make([]Company, 0)
 
 	var rows pgx.Rows
 	if ignoreUser {
-		rows, err = st.db.Query(ctx, "SELECT id, owner_id, name, time_offset FROM companies")
+		rows, err = st.db.Query(timeoutCtx, "SELECT id, owner_id, name, time_offset FROM companies")
 	} else {
-		rows, err = st.db.Query(ctx,
+		rows, err = st.db.Query(timeoutCtx,
 			"SELECT id, owner_id, name, time_offset FROM companies WHERE owner_id = $1",
 			user.ID)
 	}
@@ -49,11 +49,11 @@ func (st *PsqlStorage) GetUserCompanies(ctx context.Context, user User, ignoreUs
 
 func (st *PsqlStorage) AddCompany(ctx context.Context, user User, name string, offset utils.Offset) (
 	company Company, err error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
 
 	var exists bool
-	row := st.db.QueryRow(ctx,
+	row := st.db.QueryRow(timeoutCtx,
 		"SELECT EXISTS (SELECT FROM companies WHERE owner_id = $1 AND name = $2)",
 		user.ID, name)
 	err = row.Scan(&exists)
@@ -65,7 +65,7 @@ func (st *PsqlStorage) AddCompany(ctx context.Context, user User, name string, o
 	}
 
 	var companyID uuid.UUID
-	row = st.db.QueryRow(ctx,
+	row = st.db.QueryRow(timeoutCtx,
 		"INSERT INTO companies (owner_id, name, time_offset) VALUES ($1, $2, $3) RETURNING id",
 		user.ID, name, offset.Duration)
 	err = row.Scan(&companyID)
@@ -78,11 +78,11 @@ func (st *PsqlStorage) AddCompany(ctx context.Context, user User, name string, o
 
 func (st *PsqlStorage) GetUserCompany(ctx context.Context, user User, id uuid.UUID) (
 	company Company, err error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
 
 	var exists, accessToDevice bool
-	row := st.db.QueryRow(ctx,
+	row := st.db.QueryRow(timeoutCtx,
 		`SELECT 
     		EXISTS(SELECT FROM companies WHERE id = $1),
     		EXISTS(SELECT FROM companies WHERE id = $1 AND owner_id = $2)`,
@@ -103,11 +103,11 @@ func (st *PsqlStorage) GetUserCompany(ctx context.Context, user User, id uuid.UU
 }
 
 func (st *PsqlStorage) GetCompanyByID(ctx context.Context, id uuid.UUID) (company Company, err error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
 
 	var d time.Duration
-	row := st.db.QueryRow(ctx,
+	row := st.db.QueryRow(timeoutCtx,
 		"SELECT id, owner_id, name, time_offset FROM companies WHERE id = $1",
 		id)
 	err = row.Scan(&company.ID, &company.Owner, &company.Name, &d)
@@ -124,18 +124,18 @@ func (st *PsqlStorage) GetCompanyByID(ctx context.Context, id uuid.UUID) (compan
 
 func (st *PsqlStorage) GetCompanyDevices(ctx context.Context, user User, id uuid.UUID) (
 	devices []Device, err error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
-
 	company, err := st.GetUserCompany(ctx, user, id)
 	if err != nil {
 		return nil, err
 	}
 
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
+
 	devices = make([]Device, 0)
 
 	var rows pgx.Rows
-	rows, err = st.db.Query(ctx,
+	rows, err = st.db.Query(timeoutCtx,
 		"SELECT id, company_id, name, resource, last_online FROM devices WHERE company_id = $1",
 		company.ID)
 	if err != nil {
