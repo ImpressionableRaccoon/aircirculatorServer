@@ -104,7 +104,7 @@ func (h *Handler) GetCompany(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	companyID, err := uuid.Parse(param)
-	if err != nil {
+	if err != nil || companyID == uuid.Nil {
 		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
@@ -148,7 +148,7 @@ func (h *Handler) GetCompanyDevices(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	companyID, err := uuid.Parse(param)
-	if err != nil {
+	if err != nil || companyID == uuid.Nil {
 		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -17,6 +18,13 @@ type tokenClaims struct {
 }
 
 func (s *Service) SignUp(ctx context.Context, login string, password string) (token string, err error) {
+	if login == "" {
+		return "", ErrLoginIsEmpty
+	}
+	if password == "" {
+		return "", ErrPasswordIsEmpty
+	}
+
 	hash, salt, err := utils.PreparePassword(password, s.cfg.PasswordSalt)
 	if err != nil {
 		return "", err
@@ -31,7 +39,17 @@ func (s *Service) SignUp(ctx context.Context, login string, password string) (to
 }
 
 func (s *Service) SignIn(ctx context.Context, login string, password string) (token string, err error) {
+	if login == "" {
+		return "", ErrLoginIsEmpty
+	}
+	if password == "" {
+		return "", ErrPasswordIsEmpty
+	}
+
 	user, err := s.st.GetUserByLogin(ctx, login)
+	if errors.Is(err, storage.ErrUserNotFound) {
+		return "", ErrUnauthorized
+	}
 	if err != nil {
 		return "", err
 	}

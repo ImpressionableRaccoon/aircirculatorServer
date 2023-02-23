@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/service"
+
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/storage"
 )
 
@@ -31,6 +33,11 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := h.s.SignUp(r.Context(), request.Login, request.Password)
+	if errors.Is(err, service.ErrLoginIsEmpty) ||
+		errors.Is(err, service.ErrPasswordIsEmpty) {
+		h.HTTPJSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	if errors.Is(err, storage.ErrUserAlreadyExists) {
 		h.HTTPJSONError(w, err.Error(), http.StatusConflict)
 		return
@@ -60,6 +67,11 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := h.s.SignIn(r.Context(), request.Login, request.Password)
+	if errors.Is(err, service.ErrLoginIsEmpty) ||
+		errors.Is(err, service.ErrPasswordIsEmpty) {
+		h.HTTPJSONError(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	if errors.Is(err, storage.ErrUnauthorized) {
 		h.HTTPJSONError(w, err.Error(), http.StatusUnauthorized)
 		return

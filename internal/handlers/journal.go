@@ -22,7 +22,7 @@ func (h *Handler) GetJournal(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	deviceID, err := uuid.Parse(param)
-	if err != nil {
+	if err != nil || deviceID == uuid.Nil {
 		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}

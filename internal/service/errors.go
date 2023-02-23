@@ -8,6 +8,8 @@ var (
 	ErrUnauthorized             = errors.New("unauthorized")
 	ErrUpdateUserLastOnline     = errors.New("error update user last online")
 	ErrInvalidSigningMethod     = errors.New("invalid signing method")
+	ErrLoginIsEmpty             = errors.New("login is empty")
+	ErrPasswordIsEmpty          = errors.New("password is empty")
 	ErrWrongTokenClaimsType     = errors.New("wrong token claims type")
 	ErrWrongDeviceFormat        = errors.New("wrong device format")
 	ErrWrongScheduleID          = errors.New("wrong schedule id")

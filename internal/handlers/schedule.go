@@ -23,7 +23,7 @@ func (h *Handler) GetSchedules(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	deviceID, err := uuid.Parse(param)
-	if err != nil {
+	if err != nil || deviceID == uuid.Nil {
 		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
@@ -71,7 +71,7 @@ func (h *Handler) AddSchedules(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	deviceID, err := uuid.Parse(param)
-	if err != nil {
+	if err != nil || deviceID == uuid.Nil {
 		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
@@ -129,14 +129,14 @@ func (h *Handler) DeleteSchedule(w http.ResponseWriter, r *http.Request) {
 
 	param := chi.URLParam(r, "id")
 	deviceID, err := uuid.Parse(param)
-	if err != nil {
+	if err != nil || deviceID == uuid.Nil {
 		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
 	param = chi.URLParam(r, "schedule_id")
 	scheduleID, err := uuid.Parse(param)
-	if err != nil {
+	if err != nil || scheduleID == uuid.Nil {
 		h.HTTPJSONError(w, "Bad request", http.StatusBadRequest)
 		return
 	}
