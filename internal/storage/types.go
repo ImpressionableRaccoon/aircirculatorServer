@@ -42,9 +42,9 @@ type Schedule struct {
 }
 
 type Journal struct {
-	ID     uuid.UUID
-	Device uuid.UUID
-	Start  time.Time
-	End    time.Time
-	Done   bool
+	ID     uuid.UUID `json:"id"`
+	Device uuid.UUID `json:"device_id"`
+	Start  time.Time `json:"time_start"`
+	End    time.Time `json:"time_stop"`
+	Done   bool      `json:"done"`
 }
