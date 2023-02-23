@@ -13,4 +13,5 @@ var (
 	ErrCompanyNoPermissions = errors.New("company exists, but you have not permission to access it")
 	ErrDeviceAlreadyExists  = errors.New("device already exists")
 	ErrDeviceNotFound       = errors.New("device not found")
+	ErrDeleteScheduleFailed = errors.New("unable to delete schedule")
 )

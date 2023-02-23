@@ -36,9 +36,9 @@ func NewRouter(h *handlers.Handler, m middlewares.Middlewares) chi.Router {
 			r.Post("/device/", h.AddDevice)
 			r.Route("/device/{id}", func(r chi.Router) {
 				r.Get("/", h.GetDevice)
-				//r.Get("/schedule", nil)
-				//r.Post("/schedule", nil)
-				//r.Delete("/schedule", nil)
+				r.Get("/schedule", h.GetSchedules)
+				r.Post("/schedule", h.AddSchedules)
+				r.Delete("/schedule/{schedule_id}", h.DeleteSchedule)
 				//r.Get("/journal", nil)
 			})
 		})

@@ -34,11 +34,11 @@ type Device struct {
 }
 
 type Schedule struct {
-	ID        uuid.UUID
-	Device    uuid.UUID
-	Week      int
-	TimeStart int
-	TimeStop  int
+	ID        uuid.UUID `json:"id"`
+	Device    uuid.UUID `json:"device_id"`
+	Week      int       `json:"week_day"`
+	TimeStart int       `json:"time_start"`
+	TimeStop  int       `json:"time_stop"`
 }
 
 type Journal struct {

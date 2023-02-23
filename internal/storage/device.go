@@ -15,9 +15,9 @@ type AddedDevice struct {
 	Token string `json:"token"`
 }
 
-func (st *PsqlStorage) AddDevice(ctx context.Context, user User, companyID uuid.UUID, name string, resource int) (
+func (st *PsqlStorage) AddDevice(ctx context.Context, user User, inputDevice Device) (
 	device AddedDevice, err error) {
-	company, err := st.GetUserCompany(ctx, user, companyID)
+	company, err := st.GetUserCompany(ctx, user, inputDevice.Company)
 	if err != nil {
 		return AddedDevice{}, err
 	}
@@ -28,7 +28,7 @@ func (st *PsqlStorage) AddDevice(ctx context.Context, user User, companyID uuid.
 	var exists bool
 	row := st.db.QueryRow(timeoutCtx,
 		"SELECT EXISTS (SELECT FROM devices WHERE company_id = $1 AND name = $2)",
-		company.ID, name)
+		company.ID, inputDevice.Name)
 	err = row.Scan(&exists)
 	if err != nil {
 		return AddedDevice{}, err
@@ -41,7 +41,7 @@ func (st *PsqlStorage) AddDevice(ctx context.Context, user User, companyID uuid.
 	var deviceToken string
 	row = st.db.QueryRow(timeoutCtx,
 		"INSERT INTO devices (company_id, name, resource) VALUES ($1, $2, $3) RETURNING id, token",
-		companyID, name, resource)
+		inputDevice.Company, inputDevice.Name, inputDevice.Resource)
 	err = row.Scan(&deviceID, &deviceToken)
 	if err != nil {
 		return AddedDevice{}, err
@@ -60,7 +60,7 @@ func (st *PsqlStorage) AddDevice(ctx context.Context, user User, companyID uuid.
 	return
 }
 
-func (st *PsqlStorage) GetDevice(ctx context.Context, user User, deviceID uuid.UUID) (device Device, err error) {
+func (st *PsqlStorage) GetDevice(ctx context.Context, user User, inputDevice Device) (device Device, err error) {
 	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
 	defer timeoutCancel()
 
@@ -69,7 +69,7 @@ func (st *PsqlStorage) GetDevice(ctx context.Context, user User, deviceID uuid.U
 		`SELECT 
     		EXISTS(SELECT FROM devices WHERE id = $1),
     		EXISTS(SELECT FROM companies WHERE id = (SELECT company_id FROM devices WHERE id = $1) AND owner_id = $2)`,
-		deviceID, user.ID)
+		inputDevice.ID, user.ID)
 	err = row.Scan(&exists, &accessToDevice)
 	if err != nil {
 		return Device{}, err
@@ -82,7 +82,7 @@ func (st *PsqlStorage) GetDevice(ctx context.Context, user User, deviceID uuid.U
 		return Device{}, ErrCompanyNoPermissions
 	}
 
-	return st.GetDeviceByID(ctx, deviceID)
+	return st.GetDeviceByID(ctx, inputDevice.ID)
 }
 
 func (st *PsqlStorage) GetDeviceByID(ctx context.Context, deviceID uuid.UUID) (device Device, err error) {
