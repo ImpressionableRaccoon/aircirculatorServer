@@ -74,5 +74,10 @@ func (s *Service) ParseToken(ctx context.Context, bearer string) (user storage.U
 		return storage.User{}, ErrUnauthorized
 	}
 
+	err = s.st.UpdateUserLastOnline(ctx, user)
+	if err != nil {
+		return storage.User{}, ErrUpdateUserLastOnline
+	}
+
 	return
 }

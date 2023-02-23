@@ -6,6 +6,7 @@ import (
 
 var (
 	ErrUnauthorized             = errors.New("unauthorized")
+	ErrUpdateUserLastOnline     = errors.New("error update user last online")
 	ErrInvalidSigningMethod     = errors.New("invalid signing method")
 	ErrWrongTokenClaimsType     = errors.New("wrong token claims type")
 	ErrWrongDeviceFormat        = errors.New("wrong device format")

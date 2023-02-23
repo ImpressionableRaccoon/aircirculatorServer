@@ -55,3 +55,11 @@ func (st *PsqlStorage) GetUserByLogin(ctx context.Context, login string) (user U
 	}
 	return
 }
+
+func (st *PsqlStorage) UpdateUserLastOnline(ctx context.Context, user User) (err error) {
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
+
+	_, err = st.db.Exec(timeoutCtx, "UPDATE users SET last_online = now() WHERE id = $1", user.ID)
+	return err
+}
