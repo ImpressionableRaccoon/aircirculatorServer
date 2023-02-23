@@ -57,6 +57,7 @@ Cервис представляет собой HTTP API со следующим
 
 Регистрация производится по паре логин/пароль. Каждый логин должен быть уникальным.
 После успешной регистрации должна происходить автоматическая аутентификация пользователя.
+Bearer токен будет возвращен в заголовке Authorization.
 
 ```
 POST /api/user/register HTTP/1.1
@@ -81,6 +82,7 @@ Content-Type: application/json
 Хендлер: `POST /api/user/login`
 
 Аутентификация производится по паре логин/пароль.
+Bearer токен будет возвращен в заголовке Authorization.
 
 ```
 POST /api/user/login HTTP/1.1
@@ -122,10 +124,10 @@ Content-Length: 0
     ...
     
     {
-        "id": "900e92e8-b8ba-41e2-9c6a-4bc38665de29",
-        "login": "alex",
+        "id": "d6bbeac5-57c2-40fc-a1e0-50497f052cd8",
+        "login": "impressionableracoon",
         "is_admin": false,
-        "last_online" : "2023-01-01 12:30:00"
+        "last_online": "2023-02-23T11:36:53.550406Z"
     }
     ```
 
@@ -156,12 +158,22 @@ Content-Length: 0
     
     [
         {
-            "company_id": "dab7338b-d711-4061-bb93-6dca70ae1e15",
-            "name": "Поликлиника №123"
+            "id": "6531872f-7120-4372-9489-895a7efc3714",
+            "owner_id": "d6bbeac5-57c2-40fc-a1e0-50497f052cd8",
+            "name": "Hospital #1",
+            "time_offset": "-05:00:00"
         },
         {
-            "company_id": "4b690fd2-dbc2-44fb-b63c-99989a10601c",
-            "name": "Больница №321"
+            "id": "77a97a45-d938-48e2-97d2-3772e4188c0f",
+            "owner_id": "d6bbeac5-57c2-40fc-a1e0-50497f052cd8",
+            "name": "Центральная больница",
+            "time_offset": "00:00:00"
+        },
+        {
+            "id": "2bd8eb50-960a-4d14-a713-f0c6f1c38a92",
+            "owner_id": "d6bbeac5-57c2-40fc-a1e0-50497f052cd8",
+            "name": "Главный офис",
+            "time_offset": "09:00:00"
         }
     ]
     ```
@@ -183,7 +195,7 @@ Content-Type: application/json
 ...
 
 {
-    "name": "Центральная больница",
+    "name": "Поликлиника",
     "time_offset": "03:00:00"
 }
 ```
@@ -193,14 +205,14 @@ Content-Type: application/json
 - `201` — успешная обработка запроса:
 
     ```
-    200 OK HTTP/1.1
+    201 OK HTTP/1.1
     Content-Type: application/json
     ...
     
     {
-        "id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
-        "owner_id": "4370e4ae-8a4a-4241-a681-754fd86aab4a",
-        "name": "Центральная больница",
+        "id": "4b6e3329-6acf-484c-a7f9-76a60faee9e1",
+        "owner_id": "d6bbeac5-57c2-40fc-a1e0-50497f052cd8",
+        "name": "Поликлиника",
         "time_offset": "03:00:00"
     }
     ```
@@ -232,9 +244,9 @@ Content-Length: 0
     ...
     
     {
-        "id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
-        "owner_id": "4370e4ae-8a4a-4241-a681-754fd86aab4a",
-        "name": "Центральная больница",
+        "id": "4b6e3329-6acf-484c-a7f9-76a60faee9e1",
+        "owner_id": "d6bbeac5-57c2-40fc-a1e0-50497f052cd8",
+        "name": "Поликлиника",
         "time_offset": "03:00:00"
     }
     ```
@@ -268,28 +280,28 @@ Content-Length: 0
     
     [
         {
-            "id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
-            "company_id" : "adefc355-1459-4a21-abbb-08a36728f979",
-            "name" : "Коридор",
-            "resource" : 300000,
-            "minutes_remaining" : 244444,
-            "last_online" : "2023-02-02 22:35:03"
+            "id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
+            "company_id": "4b6e3329-6acf-484c-a7f9-76a60faee9e1",
+            "name": "Коридор",
+            "resource": 300000,
+            "minutes_remaining": 298920,
+            "last_online": "1970-01-01T00:00:00Z"
         },
         {
-            "id": "921f79d3-26c5-4d50-9ef7-10f228ca9e17",
-            "company_id" : "adefc355-1459-4a21-abbb-08a36728f979",
-            "name" : "Кабинет №1",
-            "resource" : 300000,
-            "minutes_remaining" : 255555,
-            "last_online" : "2023-02-02 22:33:54"
+            "id": "94efe634-9eb9-4d99-8e89-42f62440ae75",
+            "company_id": "4b6e3329-6acf-484c-a7f9-76a60faee9e1",
+            "name": "Кабинет #1",
+            "resource": 300000,
+            "minutes_remaining": 300000,
+            "last_online": "1970-01-01T00:00:00Z"
         },
         {
-            "id": "bc3b0a47-0bd4-4907-90d0-47370c2fbcd7",
-            "company_id" : "adefc355-1459-4a21-abbb-08a36728f979",
-            "name" : "Кабинет №2",
-            "resource" : 300000,
-            "minutes_remaining" : 234567,
-            "last_online" : "2023-02-02 22:34:34"
+            "id": "8bde5cc6-fae9-4534-8498-e01c99751561",
+            "company_id": "4b6e3329-6acf-484c-a7f9-76a60faee9e1",
+            "name": "Кабинет #2",
+            "resource": 300000,
+            "minutes_remaining": 300000,
+            "last_online": "1970-01-01T00:00:00Z"
         }
     ]
     ```
@@ -314,7 +326,7 @@ Content-Type: application/json
 ...
 
 {
-    "company_id": "adefc355-1459-4a21-abbb-08a36728f979",
+    "company_id": "4b6e3329-6acf-484c-a7f9-76a60faee9e1",
     "name": "Коридор",
     "resource": 300000
 }
@@ -325,16 +337,18 @@ Content-Type: application/json
 - `201` — успешная обработка запроса:
 
     ```
-    200 OK HTTP/1.1
+    201 OK HTTP/1.1
     Content-Type: application/json
     ...
     
     {
-        "id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
-        "token": "c32978bffb1db81f3ab6845a3e840f88",
-        "company_id" : "adefc355-1459-4a21-abbb-08a36728f979",
-        "name" : "Коридор",
-        "resource" : 300000
+        "id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
+        "company_id": "4b6e3329-6acf-484c-a7f9-76a60faee9e1",
+        "name": "Коридор",
+        "resource": 300000,
+        "minutes_remaining": 300000,
+        "last_online": "1970-01-01T00:00:00Z",
+        "token": "346399537cd131b510506a5e8f30777e"
     }
     ```
 
@@ -366,12 +380,12 @@ Content-Length: 0
     ...
 
     {
-        "id": "bc3b0a47-0bd4-4907-90d0-47370c2fbcd7",
-        "company_id" : "adefc355-1459-4a21-abbb-08a36728f979",
-        "name" : "Кабинет №2",
-        "resource" : 300000,
-        "minutes_remaining" : 234567,
-        "last_online" : "2023-02-02 22:34:34"
+        "id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
+        "company_id": "4b6e3329-6acf-484c-a7f9-76a60faee9e1",
+        "name": "Коридор",
+        "resource": 300000,
+        "minutes_remaining": 298920,
+        "last_online": "1970-01-01T00:00:00Z"
     }
     ```
 
@@ -404,18 +418,25 @@ Content-Length: 0
     
     [
         {
-            "id": "f5f3f96d-bc4c-4897-9789-bc82ffd9fe67",
-            "device_id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
+            "id": "a3f224cd-93bf-475b-bf6d-6d75ee820363",
+            "device_id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
             "week_day": 0,
             "time_start": 600,
             "time_stop": 1200
         },
         {
-            "id": "b7998041-f728-48f3-8ee4-3b8bae483aa3",
-            "device_id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
+            "id": "5d912ec4-1685-49e4-a2fd-eb9dd1e8b0f1",
+            "device_id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
             "week_day": 1,
-            "time_start": 620,
-            "time_stop": 1220
+            "time_start": 600,
+            "time_stop": 1200
+        },
+        {
+            "id": "b49e92ec-ec19-47e5-ab99-a5865d6d0324",
+            "device_id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
+            "week_day": 2,
+            "time_start": 600,
+            "time_stop": 1200
         }
     ]
     ```
@@ -448,6 +469,11 @@ Content-Type: application/json
         "week_day": 1,
         "time_start": 600,
         "time_stop": 1200
+    },
+    {
+        "week_day": 2,
+        "time_start": 600,
+        "time_stop": 1200
     }
 ]
 ```
@@ -457,24 +483,31 @@ Content-Type: application/json
 - `201` — успешная обработка запроса:
 
     ```
-    200 OK HTTP/1.1
+    201 OK HTTP/1.1
     Content-Type: application/json
     ...
     
     [
         {
-            "id": "f5f3f96d-bc4c-4897-9789-bc82ffd9fe67",
-            "device_id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
+            "id": "a3f224cd-93bf-475b-bf6d-6d75ee820363",
+            "device_id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
             "week_day": 0,
             "time_start": 600,
             "time_stop": 1200
         },
         {
-            "id": "b7998041-f728-48f3-8ee4-3b8bae483aa3",
-            "device_id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
+            "id": "5d912ec4-1685-49e4-a2fd-eb9dd1e8b0f1",
+            "device_id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
             "week_day": 1,
-            "time_start": 620,
-            "time_stop": 1220
+            "time_start": 600,
+            "time_stop": 1200
+        },
+        {
+            "id": "b49e92ec-ec19-47e5-ab99-a5865d6d0324",
+            "device_id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
+            "week_day": 2,
+            "time_start": 600,
+            "time_stop": 1200
         }
     ]
     ```
@@ -529,16 +562,18 @@ Content-Length: 0
     
     [
         {
-            "id": "32f53791-62a2-40ce-9d78-fd8da3e63359",
-            "device_id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
-            "timestamp_start": "2023-02-02 09:00:00",
-            "timestamp_end": "2023-02-02 18:00:00"
+            "id": "587af98a-c368-416c-b273-958c9eb849b7",
+            "device_id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
+            "time_start": "2023-02-22T00:00:00Z",
+            "time_stop": "2023-02-22T09:00:00Z",
+            "done": true
         },
         {
-            "id": "32f53791-62a2-40ce-9d78-fd8da3e63359",
-            "device_id": "d5c9b10e-2e83-4ea3-af20-fcb61d584a88",
-            "timestamp_start": "2023-02-03 09:00:00",
-            "timestamp_end": "2023-02-03 18:00:00"
+            "id": "ac02bbda-4129-4ccb-b2ab-84618c1af0ad",
+            "device_id": "0b2a97f0-88c4-46cc-bc2c-4cef7ac4bc28",
+            "time_start": "2023-02-23T00:00:00Z",
+            "time_stop": "2023-02-23T09:00:00Z",
+            "done": true
         }
     ]
     ```
