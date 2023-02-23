@@ -150,10 +150,9 @@ func (st *PsqlStorage) GetCompanyDevices(ctx context.Context, user User, id uuid
 			return nil, err
 		}
 
-		device.MinutesRemaining, err = st.CalcDeviceMinutesRemaining(ctx, device.ID)
-		if err != nil {
-			return nil, err
-		}
+		var sum int
+		sum, err = st.GetJournalSum(ctx, device)
+		device.MinutesRemaining = device.Resource - sum
 
 		devices = append(devices, device)
 	}

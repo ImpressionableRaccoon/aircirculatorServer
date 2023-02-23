@@ -100,15 +100,9 @@ func (st *PsqlStorage) GetDeviceByID(ctx context.Context, deviceID uuid.UUID) (d
 		return Device{}, err
 	}
 
-	device.MinutesRemaining, err = st.CalcDeviceMinutesRemaining(ctx, device.ID)
-	if err != nil {
-		return Device{}, err
-	}
+	var sum int
+	sum, err = st.GetJournalSum(ctx, device)
+	device.MinutesRemaining = device.Resource - sum
 
 	return
-}
-
-func (st *PsqlStorage) CalcDeviceMinutesRemaining(ctx context.Context, id uuid.UUID) (
-	minutesRemaining int, err error) {
-	return 0, nil // todo: implement
 }

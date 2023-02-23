@@ -61,7 +61,7 @@ func (h *Handler) AddDevice(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 	_, err = w.Write(body)
 	if err != nil {
 		log.Printf("write failed: %v", err)
