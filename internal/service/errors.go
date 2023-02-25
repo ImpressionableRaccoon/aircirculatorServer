@@ -18,4 +18,5 @@ var (
 	ErrWrongScheduleTimeStart   = errors.New("wrong schedule time start")
 	ErrWrongScheduleTimeStop    = errors.New("wrong schedule time stop")
 	ErrTimeStopNotMoreTimeStart = errors.New("wrong schedule: time stop must be later than time start")
+	ErrFirmwareNoUpdates        = errors.New("no firmware updates")
 )

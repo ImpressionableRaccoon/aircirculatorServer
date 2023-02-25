@@ -12,6 +12,7 @@ type Config struct {
 	PasswordSalt    string
 	TokenTTL        time.Duration
 	TokenSigningKey []byte
+	FirmwarePath    string
 }
 
 func NewConfig() *Config {
@@ -20,6 +21,7 @@ func NewConfig() *Config {
 		PasswordSalt:    "juaT9OLosPlhUhDj",
 		TokenTTL:        time.Hour * 12,
 		TokenSigningKey: []byte("qYqx2APnPhDHBl2AW3OjUYeWWFAtzF7d"),
+		FirmwarePath:    "assets/firmware.bin",
 	}
 
 	loadEnv(cfg)
