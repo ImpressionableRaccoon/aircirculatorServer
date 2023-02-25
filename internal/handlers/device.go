@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/storage"
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/utils"
 )
 
 func (h *Handler) AddDevice(w http.ResponseWriter, r *http.Request) {
@@ -165,6 +166,7 @@ func (h *Handler) GetDeviceSchedule(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("Sha256-Hash", utils.GetSHA256(body))
 	if len(schedules) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
