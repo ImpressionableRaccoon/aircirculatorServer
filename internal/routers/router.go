@@ -48,7 +48,7 @@ func NewRouter(h *handlers.Handler, m middlewares.Middlewares) chi.Router {
 
 			r.Get("/device/info", h.GetDeviceInfo)
 			r.Get("/device/schedule", h.GetDeviceSchedule)
-			//r.Post("/device/state", nil)
+			r.Post("/device/state", h.PushDeviceStates)
 		})
 
 		r.Get("/device/firmware", h.GetFirmware)

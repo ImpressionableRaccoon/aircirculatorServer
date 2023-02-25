@@ -15,13 +15,16 @@ import (
 )
 
 type PsqlStorage struct {
-	db *pgxpool.Pool
+	db  *pgxpool.Pool
+	cfg *configs.Config
 }
 
 func NewPsqlStorage(cfg *configs.Config) (*PsqlStorage, error) {
-	st := &PsqlStorage{}
+	st := &PsqlStorage{
+		cfg: cfg,
+	}
 
-	poolConfig, err := pgxpool.ParseConfig(cfg.DatabaseDSN)
+	poolConfig, err := pgxpool.ParseConfig(st.cfg.DatabaseDSN)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +39,7 @@ func NewPsqlStorage(cfg *configs.Config) (*PsqlStorage, error) {
 		return nil, err
 	}
 
-	err = st.doMigrate(cfg.DatabaseDSN)
+	err = st.doMigrate(st.cfg.DatabaseDSN)
 	if err != nil {
 		return nil, err
 	}

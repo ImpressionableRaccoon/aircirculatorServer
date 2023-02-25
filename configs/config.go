@@ -13,6 +13,7 @@ type Config struct {
 	TokenTTL        time.Duration
 	TokenSigningKey []byte
 	FirmwarePath    string
+	JournalTTL      time.Duration
 }
 
 func NewConfig() *Config {
@@ -22,6 +23,7 @@ func NewConfig() *Config {
 		TokenTTL:        time.Hour * 12,
 		TokenSigningKey: []byte("qYqx2APnPhDHBl2AW3OjUYeWWFAtzF7d"),
 		FirmwarePath:    "assets/firmware.bin",
+		JournalTTL:      time.Minute,
 	}
 
 	loadEnv(cfg)
