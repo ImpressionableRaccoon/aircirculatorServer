@@ -133,3 +133,15 @@ func (st *PsqlStorage) AuthDevice(ctx context.Context, deviceID uuid.UUID, token
 
 	return device, nil
 }
+
+func (st *PsqlStorage) UpdateDeviceLastOnline(ctx context.Context, device Device) (err error) {
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
+
+	_, err = st.db.Exec(timeoutCtx, "UPDATE devices SET last_online = now() WHERE id = $1", device.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

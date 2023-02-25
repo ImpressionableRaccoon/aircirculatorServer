@@ -105,5 +105,11 @@ func (s *Service) AuthDevice(ctx context.Context, deviceID uuid.UUID, token stri
 	if err != nil {
 		return storage.Device{}, err
 	}
+
+	err = s.st.UpdateDeviceLastOnline(ctx, device)
+	if err != nil {
+		return storage.Device{}, err
+	}
+
 	return device, nil
 }
