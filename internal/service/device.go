@@ -26,3 +26,8 @@ func (s *Service) GetDevice(ctx context.Context, user storage.User, deviceID uui
 	inputDevice := storage.Device{ID: deviceID}
 	return s.st.GetDevice(ctx, user, inputDevice)
 }
+
+func (s *Service) GetDeviceSchedules(ctx context.Context, device storage.Device) (
+	schedules []storage.Schedule, err error) {
+	return s.st.GetSchedules(ctx, device)
+}

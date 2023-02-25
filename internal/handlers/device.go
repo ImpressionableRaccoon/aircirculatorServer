@@ -134,3 +134,44 @@ func (h *Handler) GetDeviceInfo(w http.ResponseWriter, r *http.Request) {
 		log.Printf("write failed: %v", err)
 	}
 }
+
+func (h *Handler) GetDeviceSchedule(w http.ResponseWriter, r *http.Request) {
+	device, err := getDevice(r)
+	if err != nil {
+		log.Printf("unable to parse device: %v", err)
+		h.HTTPJSONError(w, "Server error", http.StatusInternalServerError)
+		return
+	}
+
+	schedules, err := h.s.GetDeviceSchedules(r.Context(), device)
+	if errors.Is(err, storage.ErrDeviceNotFound) {
+		h.HTTPJSONError(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	if errors.Is(err, storage.ErrCompanyNoPermissions) {
+		h.HTTPJSONError(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	if err != nil {
+		h.HTTPJSONError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	body, err := json.Marshal(schedules)
+	if err != nil {
+		h.HTTPJSONError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	if len(schedules) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		_, err = w.Write(body)
+		if err != nil {
+			log.Printf("write failed: %v", err)
+		}
+	}
+}
