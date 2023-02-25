@@ -11,7 +11,7 @@ var (
 	ErrLoginIsEmpty             = errors.New("login is empty")
 	ErrPasswordIsEmpty          = errors.New("password is empty")
 	ErrWrongTokenClaimsType     = errors.New("wrong token claims type")
-	ErrWrongDeviceID            = errors.New("wrong schedule id")
+	ErrWrongDeviceID            = errors.New("wrong device id")
 	ErrWrongDeviceFormat        = errors.New("wrong device format")
 	ErrWrongScheduleID          = errors.New("wrong schedule id")
 	ErrWrongScheduleWeek        = errors.New("wrong schedule week day")
