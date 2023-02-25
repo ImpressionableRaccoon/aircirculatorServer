@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/service"
-
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/utils"
 )
 

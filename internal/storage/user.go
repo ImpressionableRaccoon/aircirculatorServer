@@ -5,9 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/jackc/pgx/v5"
-
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 func (st *PsqlStorage) SignUp(ctx context.Context, login string, hash []byte, salt string) error {

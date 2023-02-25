@@ -5,11 +5,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/utils"
-
 	"github.com/google/uuid"
-
 	"github.com/jackc/pgx/v5"
+
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/utils"
 )
 
 func (st *PsqlStorage) GetUserCompanies(ctx context.Context, user User, ignoreUser bool) (companies []Company, err error) {

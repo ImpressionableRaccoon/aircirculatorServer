@@ -7,10 +7,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/storage"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/storage"
 )
 
 func (h *Handler) GetSchedules(w http.ResponseWriter, r *http.Request) {

@@ -3,9 +3,9 @@ package storage
 import (
 	"time"
 
-	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/utils"
-
 	"github.com/google/uuid"
+
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/utils"
 )
 
 type User struct {
