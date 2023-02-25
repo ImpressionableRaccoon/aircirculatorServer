@@ -47,7 +47,7 @@ func NewRouter(h *handlers.Handler, m middlewares.Middlewares) chi.Router {
 			r.Use(m.DeviceAuth)
 
 			r.Get("/device/info", h.GetDeviceInfo)
-			r.Get("/device/schedule", h.GetDeviceSchedule)
+			r.Get("/device/schedule", h.GetDeviceSchedules)
 			r.Post("/device/state", h.PushDeviceStates)
 		})
 

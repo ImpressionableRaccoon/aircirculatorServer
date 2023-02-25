@@ -136,7 +136,7 @@ func (h *Handler) GetDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) GetDeviceSchedule(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetDeviceSchedules(w http.ResponseWriter, r *http.Request) {
 	device, err := getDevice(r)
 	if err != nil {
 		log.Printf("unable to parse device: %v", err)
@@ -145,14 +145,6 @@ func (h *Handler) GetDeviceSchedule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	schedules, err := h.s.GetDeviceSchedules(r.Context(), device)
-	if errors.Is(err, storage.ErrDeviceNotFound) {
-		h.HTTPJSONError(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	if errors.Is(err, storage.ErrCompanyNoPermissions) {
-		h.HTTPJSONError(w, err.Error(), http.StatusForbidden)
-		return
-	}
 	if err != nil {
 		h.HTTPJSONError(w, err.Error(), http.StatusInternalServerError)
 		return
