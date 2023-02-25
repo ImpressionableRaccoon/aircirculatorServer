@@ -26,7 +26,7 @@ func (m *Middlewares) DeviceAuth(next http.Handler) http.Handler {
 
 		device, err := m.s.AuthDevice(r.Context(), deviceID, token)
 		if err != nil {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			m.h.HTTPJSONError(w, service.ErrUnauthorized.Error(), http.StatusUnauthorized)
 			return
 		}
 
