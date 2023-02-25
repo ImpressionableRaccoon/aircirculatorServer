@@ -111,3 +111,26 @@ func (h *Handler) GetDevice(w http.ResponseWriter, r *http.Request) {
 		log.Printf("write failed: %v", err)
 	}
 }
+
+func (h *Handler) GetDeviceInfo(w http.ResponseWriter, r *http.Request) {
+	device, err := getDevice(r)
+	if err != nil {
+		log.Printf("unable to parse device: %v", err)
+		h.HTTPJSONError(w, "Server error", http.StatusInternalServerError)
+		return
+	}
+
+	body, err := json.Marshal(device)
+	if err != nil {
+		h.HTTPJSONError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write(body)
+	if err != nil {
+		log.Printf("write failed: %v", err)
+	}
+}

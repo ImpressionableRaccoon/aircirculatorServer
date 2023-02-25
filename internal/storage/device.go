@@ -94,7 +94,7 @@ func (st *PsqlStorage) GetDeviceByID(ctx context.Context, deviceID uuid.UUID) (d
 		deviceID)
 	err = row.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.LastOnline)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return Device{}, ErrCompanyNotFound
+		return Device{}, ErrDeviceNotFound
 	}
 	if err != nil {
 		return Device{}, err
@@ -102,7 +102,35 @@ func (st *PsqlStorage) GetDeviceByID(ctx context.Context, deviceID uuid.UUID) (d
 
 	var sum int
 	sum, err = st.GetJournalSum(ctx, device)
+	if err != nil {
+		return Device{}, err
+	}
 	device.MinutesRemaining = device.Resource - sum
 
-	return
+	return device, nil
+}
+
+func (st *PsqlStorage) AuthDevice(ctx context.Context, deviceID uuid.UUID, token string) (device Device, err error) {
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
+	defer timeoutCancel()
+
+	row := st.db.QueryRow(timeoutCtx,
+		"SELECT id, company_id, name, resource, last_online FROM devices WHERE id = $1 AND token = $2",
+		deviceID, token)
+	err = row.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.LastOnline)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return Device{}, ErrDeviceNotFound
+	}
+	if err != nil {
+		return Device{}, err
+	}
+
+	var sum int
+	sum, err = st.GetJournalSum(ctx, device)
+	if err != nil {
+		return Device{}, err
+	}
+	device.MinutesRemaining = device.Resource - sum
+
+	return device, nil
 }

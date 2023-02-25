@@ -43,12 +43,15 @@ func NewRouter(h *handlers.Handler, m middlewares.Middlewares) chi.Router {
 			})
 		})
 
-		//r.Group(func(r chi.Router) {
-		//	r.Get("/device/info", nil)
-		//	r.Get("/device/firmware", nil)
-		//	r.Get("/device/schedule", nil)
-		//	r.Post("/device/state", nil)
-		//})
+		r.Group(func(r chi.Router) {
+			r.Use(m.DeviceAuth)
+
+			r.Get("/device/info", h.GetDeviceInfo)
+			//r.Get("/device/schedule", nil)
+			//r.Post("/device/state", nil)
+		})
+
+		//r.Get("/device/firmware", nil)
 	})
 
 	return r

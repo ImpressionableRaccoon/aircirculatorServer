@@ -19,3 +19,11 @@ func getUser(r *http.Request) (user storage.User, err error) {
 	}
 	return user, nil
 }
+
+func getDevice(r *http.Request) (device storage.Device, err error) {
+	device, ok := r.Context().Value(utils.ContextKey("device")).(storage.Device)
+	if !ok {
+		return storage.Device{}, ErrWrongValueType
+	}
+	return device, nil
+}

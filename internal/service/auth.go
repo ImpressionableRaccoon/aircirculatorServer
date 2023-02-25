@@ -99,3 +99,11 @@ func (s *Service) ParseToken(ctx context.Context, bearer string) (user storage.U
 
 	return
 }
+
+func (s *Service) AuthDevice(ctx context.Context, deviceID uuid.UUID, token string) (device storage.Device, err error) {
+	device, err = s.st.AuthDevice(ctx, deviceID, token)
+	if err != nil {
+		return storage.Device{}, err
+	}
+	return device, nil
+}
