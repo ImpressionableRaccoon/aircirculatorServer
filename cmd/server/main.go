@@ -10,6 +10,7 @@ import (
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/routers"
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/service"
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/storage"
+	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/workers"
 )
 
 func main() {
@@ -29,6 +30,9 @@ func main() {
 	m := middlewares.NewMiddlewares(s, h, cfg)
 
 	r := routers.NewRouter(h, m)
+
+	w := workers.NewWorkers(s, cfg)
+	defer w.Stop()
 
 	log.Fatal(http.ListenAndServe(cfg.ServerAddress, r))
 }
