@@ -35,6 +35,7 @@ func main() {
 	defer w.Stop()
 
 	w.DropShortJournals()
+	w.TelegramNotifier()
 
 	log.Fatal(http.ListenAndServe(cfg.ServerAddress, r))
 }
