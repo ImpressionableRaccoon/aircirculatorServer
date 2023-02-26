@@ -18,3 +18,7 @@ func (s *Service) GetJournal(ctx context.Context, user storage.User, deviceID uu
 
 	return s.st.GetJournal(ctx, device)
 }
+
+func (s *Service) DropShortJournals(ctx context.Context) (deleted int, err error) {
+	return s.st.DropShortJournals(ctx)
+}

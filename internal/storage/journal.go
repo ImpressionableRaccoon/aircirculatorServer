@@ -52,3 +52,17 @@ func (st *PsqlStorage) GetJournalSum(ctx context.Context, device Device) (sum in
 
 	return int(s.Minutes()), nil
 }
+
+func (st *PsqlStorage) DropShortJournals(ctx context.Context) (deleted int, err error) {
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*30)
+	defer timeoutCancel()
+
+	res, err := st.db.Exec(timeoutCtx,
+		`DELETE FROM journals WHERE done = 'true' AND (timestamp_end - timestamp_start) < $1`,
+		st.cfg.JournalTTL)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(res.RowsAffected()), nil
+}

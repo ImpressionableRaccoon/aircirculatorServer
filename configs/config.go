@@ -7,23 +7,25 @@ import (
 )
 
 type Config struct {
-	ServerAddress   string
-	DatabaseDSN     string
-	PasswordSalt    string
-	TokenTTL        time.Duration
-	TokenSigningKey []byte
-	FirmwarePath    string
-	JournalTTL      time.Duration
+	ServerAddress          string
+	DatabaseDSN            string
+	PasswordSalt           string
+	TokenTTL               time.Duration
+	TokenSigningKey        []byte
+	FirmwarePath           string
+	JournalTTL             time.Duration
+	JournalsWorkerInterval time.Duration
 }
 
 func NewConfig() *Config {
 	cfg := &Config{
-		ServerAddress:   ":8080",
-		PasswordSalt:    "juaT9OLosPlhUhDj",
-		TokenTTL:        time.Hour * 12,
-		TokenSigningKey: []byte("qYqx2APnPhDHBl2AW3OjUYeWWFAtzF7d"),
-		FirmwarePath:    "assets/firmware.bin",
-		JournalTTL:      time.Minute,
+		ServerAddress:          ":8080",
+		PasswordSalt:           "juaT9OLosPlhUhDj",
+		TokenTTL:               time.Hour * 12,
+		TokenSigningKey:        []byte("qYqx2APnPhDHBl2AW3OjUYeWWFAtzF7d"),
+		FirmwarePath:           "assets/firmware.bin",
+		JournalTTL:             time.Minute,
+		JournalsWorkerInterval: time.Second * 15,
 	}
 
 	loadEnv(cfg)

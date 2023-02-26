@@ -34,5 +34,7 @@ func main() {
 	w := workers.NewWorkers(s, cfg)
 	defer w.Stop()
 
+	w.DropShortJournals()
+
 	log.Fatal(http.ListenAndServe(cfg.ServerAddress, r))
 }
