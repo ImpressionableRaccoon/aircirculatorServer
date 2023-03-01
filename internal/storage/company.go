@@ -135,7 +135,15 @@ func (st *PsqlStorage) GetCompanyDevices(ctx context.Context, user User, id uuid
 
 	var rows pgx.Rows
 	rows, err = st.db.Query(timeoutCtx,
-		"SELECT id, company_id, name, resource, last_online FROM devices WHERE company_id = $1",
+		`SELECT
+			id,
+			company_id,
+			name,
+			resource,
+			(SELECT resource-EXTRACT(EPOCH FROM COALESCE(SUM(timestamp_end - timestamp_start), '0 days')::INTERVAL)/60
+				FROM journals WHERE device_id = devices.id)::INTEGER as minutes_remaining,
+			last_online
+			FROM devices WHERE company_id = $1`,
 		company.ID)
 	if err != nil {
 		return nil, err
@@ -144,14 +152,11 @@ func (st *PsqlStorage) GetCompanyDevices(ctx context.Context, user User, id uuid
 	for rows.Next() {
 		device := Device{}
 
-		err = rows.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.LastOnline)
+		err = rows.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.MinutesRemaining,
+			&device.LastOnline)
 		if err != nil {
 			return nil, err
 		}
-
-		var sum int
-		sum, err = st.GetJournalSum(ctx, device)
-		device.MinutesRemaining = device.Resource - sum
 
 		devices = append(devices, device)
 	}

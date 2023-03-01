@@ -89,22 +89,24 @@ func (st *PsqlStorage) GetDeviceByID(ctx context.Context, deviceID uuid.UUID) (d
 	defer timeoutCancel()
 
 	row := st.db.QueryRow(timeoutCtx,
-		"SELECT id, company_id, name, resource, last_online FROM devices WHERE id = $1",
+		`SELECT
+			id,
+			company_id,
+			name,
+			resource,
+			(SELECT resource-EXTRACT(EPOCH FROM COALESCE(SUM(timestamp_end - timestamp_start), '0 days')::INTERVAL)/60
+				FROM journals WHERE device_id = devices.id)::INTEGER as minutes_remaining,
+			last_online
+			FROM devices WHERE id = $1`,
 		deviceID)
-	err = row.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.LastOnline)
+	err = row.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.MinutesRemaining,
+		&device.LastOnline)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Device{}, ErrDeviceNotFound
 	}
 	if err != nil {
 		return Device{}, err
 	}
-
-	var sum int
-	sum, err = st.GetJournalSum(ctx, device)
-	if err != nil {
-		return Device{}, err
-	}
-	device.MinutesRemaining = device.Resource - sum
 
 	return device, nil
 }
@@ -114,22 +116,25 @@ func (st *PsqlStorage) CheckDeviceAuthorization(ctx context.Context, deviceID uu
 	defer timeoutCancel()
 
 	row := st.db.QueryRow(timeoutCtx,
-		"SELECT id, company_id, name, resource, last_online FROM devices WHERE id = $1 AND token = $2",
+		`SELECT
+			id,
+			company_id,
+			name,
+			resource,
+			(SELECT resource-EXTRACT(EPOCH FROM COALESCE(SUM(timestamp_end - timestamp_start), '0 days')::INTERVAL)/60
+				FROM journals WHERE device_id = devices.id)::INTEGER as minutes_remaining,
+			last_online
+			FROM devices
+			WHERE id = $1 AND token = $2`,
 		deviceID, token)
-	err = row.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.LastOnline)
+	err = row.Scan(&device.ID, &device.Company, &device.Name, &device.Resource, &device.MinutesRemaining,
+		&device.LastOnline)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Device{}, ErrDeviceNotFound
 	}
 	if err != nil {
 		return Device{}, err
 	}
-
-	var sum int
-	sum, err = st.GetJournalSum(ctx, device)
-	if err != nil {
-		return Device{}, err
-	}
-	device.MinutesRemaining = device.Resource - sum
 
 	return device, nil
 }

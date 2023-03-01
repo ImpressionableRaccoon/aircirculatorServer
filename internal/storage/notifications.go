@@ -36,6 +36,8 @@ func (st *PsqlStorage) GetAllDevices(ctx context.Context) (devices []Notificatio
 		(SELECT name FROM companies WHERE id = company_id) AS company_name,
 		name AS device_name,
 		resource,
+		(SELECT resource-EXTRACT(EPOCH FROM COALESCE(SUM(timestamp_end - timestamp_start), '0 days')::INTERVAL)/60
+				FROM journals WHERE device_id = devices.id)::INTEGER as minutes_remaining,
 		last_online,
 		(SELECT time_offset FROM companies WHERE id = company_id)
 		FROM devices`)
@@ -52,16 +54,13 @@ func (st *PsqlStorage) GetAllDevices(ctx context.Context) (devices []Notificatio
 			&device.Company,
 			&device.Name,
 			&device.Resource,
+			&device.MinutesRemaining,
 			&device.LastOnline,
 			&device.TimeOffset,
 		)
 		if err != nil {
 			return nil, err
 		}
-
-		var sum int
-		sum, err = st.GetJournalSum(ctx, Device{ID: device.ID})
-		device.MinutesRemaining = device.Resource - sum
 
 		locationName := fmt.Sprintf(
 			"%02d:%02d:%02d",
