@@ -11,7 +11,7 @@ type Config struct {
 	DatabaseDSN                 string
 	PasswordSalt                string
 	TokenTTL                    time.Duration
-	TokenSigningKey             []byte
+	TokenSigningKey             string
 	FirmwarePath                string
 	JournalTTL                  time.Duration
 	JournalsWorkerInterval      time.Duration
@@ -21,13 +21,10 @@ type Config struct {
 	DeviceOfflineDuration       time.Duration
 }
 
-// todo: env
 func NewConfig() *Config {
 	cfg := &Config{
 		ServerAddress:               ":8080",
-		PasswordSalt:                "juaT9OLosPlhUhDj",
 		TokenTTL:                    time.Hour * 12,
-		TokenSigningKey:             []byte("qYqx2APnPhDHBl2AW3OjUYeWWFAtzF7d"),
 		FirmwarePath:                "assets/firmware.bin",
 		JournalTTL:                  time.Minute,
 		JournalsWorkerInterval:      time.Second * 15,
@@ -50,6 +47,14 @@ func loadEnv(cfg *Config) {
 		cfg.DatabaseDSN = s
 	}
 
+	if s, ok := os.LookupEnv("PASSWORD_SALT"); ok {
+		cfg.PasswordSalt = s
+	}
+
+	if s, ok := os.LookupEnv("TOKEN_SIGNING_KEY"); ok {
+		cfg.TokenSigningKey = s
+	}
+
 	if s, ok := os.LookupEnv("TELEGRAM_TOKEN"); ok {
 		cfg.TelegramToken = s
 	}
@@ -62,6 +67,8 @@ func loadEnv(cfg *Config) {
 func loadArgs(cfg *Config) {
 	flag.StringVar(&cfg.ServerAddress, "a", cfg.ServerAddress, "server address")
 	flag.StringVar(&cfg.DatabaseDSN, "d", cfg.DatabaseDSN, "database data source name")
+	flag.StringVar(&cfg.PasswordSalt, "s", cfg.PasswordSalt, "password salt")
+	flag.StringVar(&cfg.TokenSigningKey, "k", cfg.TokenSigningKey, "token signing key")
 	flag.StringVar(&cfg.TelegramToken, "t", cfg.TelegramToken, "telegram bot token")
 	flag.StringVar(&cfg.TelegramChatID, "c", cfg.TelegramChatID, "telegram chat id")
 

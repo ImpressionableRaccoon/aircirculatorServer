@@ -67,7 +67,7 @@ func (s *Service) SignIn(ctx context.Context, login string, password string) (to
 		UserID: user.ID,
 	})
 
-	return t.SignedString(s.cfg.TokenSigningKey)
+	return t.SignedString([]byte(s.cfg.TokenSigningKey))
 }
 
 func (s *Service) ParseToken(ctx context.Context, bearer string) (user storage.User, err error) {
@@ -76,7 +76,7 @@ func (s *Service) ParseToken(ctx context.Context, bearer string) (user storage.U
 			return nil, ErrInvalidSigningMethod
 		}
 
-		return s.cfg.TokenSigningKey, nil
+		return []byte(s.cfg.TokenSigningKey), nil
 	})
 	if err != nil {
 		return
