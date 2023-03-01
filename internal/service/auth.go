@@ -30,7 +30,7 @@ func (s *Service) SignUp(ctx context.Context, login string, password string) (to
 		return "", err
 	}
 
-	err = s.st.SignUp(ctx, login, hash, salt)
+	err = s.RegisterUser(ctx, login, hash, salt)
 	if err != nil {
 		return "", err
 	}
@@ -46,7 +46,7 @@ func (s *Service) SignIn(ctx context.Context, login string, password string) (to
 		return "", ErrPasswordIsEmpty
 	}
 
-	user, err := s.st.GetUserByLogin(ctx, login)
+	user, err := s.GetUserByLogin(ctx, login)
 	if errors.Is(err, storage.ErrUserNotFound) {
 		return "", ErrUnauthorized
 	}
@@ -87,12 +87,12 @@ func (s *Service) ParseToken(ctx context.Context, bearer string) (user storage.U
 		return storage.User{}, ErrWrongTokenClaimsType
 	}
 
-	user, err = s.st.GetUserByID(ctx, claims.UserID)
+	user, err = s.GetUserByID(ctx, claims.UserID)
 	if err != nil {
 		return storage.User{}, ErrUnauthorized
 	}
 
-	err = s.st.UpdateUserLastOnline(ctx, user)
+	err = s.UpdateUserLastOnline(ctx, user)
 	if err != nil {
 		return storage.User{}, ErrUpdateUserLastOnline
 	}
@@ -101,12 +101,12 @@ func (s *Service) ParseToken(ctx context.Context, bearer string) (user storage.U
 }
 
 func (s *Service) AuthDevice(ctx context.Context, deviceID uuid.UUID, token string) (device storage.Device, err error) {
-	device, err = s.st.AuthDevice(ctx, deviceID, token)
+	device, err = s.CheckDeviceAuthorization(ctx, deviceID, token)
 	if err != nil {
 		return storage.Device{}, err
 	}
 
-	err = s.st.UpdateDeviceLastOnline(ctx, device)
+	err = s.UpdateDeviceLastOnline(ctx, device)
 	if err != nil {
 		return storage.Device{}, err
 	}

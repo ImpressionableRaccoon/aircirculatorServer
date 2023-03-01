@@ -34,8 +34,8 @@ func main() {
 	w := workers.NewWorkers(s, cfg)
 	defer w.Stop()
 
-	w.DropShortJournals()
-	w.TelegramNotifier()
+	go w.DropShortJournals()
+	go w.TelegramNotifier()
 
 	log.Fatal(http.ListenAndServe(cfg.ServerAddress, r))
 }

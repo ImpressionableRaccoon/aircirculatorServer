@@ -18,16 +18,5 @@ func (s *Service) AddDevice(ctx context.Context, user storage.User, companyID uu
 		Name:     name,
 		Resource: resource,
 	}
-	return s.st.AddDevice(ctx, user, inputDevice)
-}
-
-func (s *Service) GetDevice(ctx context.Context, user storage.User, deviceID uuid.UUID) (
-	device storage.Device, err error) {
-	inputDevice := storage.Device{ID: deviceID}
-	return s.st.GetDevice(ctx, user, inputDevice)
-}
-
-func (s *Service) GetDeviceSchedules(ctx context.Context, device storage.Device) (
-	schedules []storage.Schedule, err error) {
-	return s.st.GetSchedules(ctx, device)
+	return s.AddUserDevice(ctx, user, inputDevice)
 }

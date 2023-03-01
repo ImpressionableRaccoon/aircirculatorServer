@@ -21,6 +21,7 @@ type Config struct {
 	DeviceOfflineDuration       time.Duration
 }
 
+// todo: env
 func NewConfig() *Config {
 	cfg := &Config{
 		ServerAddress:               ":8080",

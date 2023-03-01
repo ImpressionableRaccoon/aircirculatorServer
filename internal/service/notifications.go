@@ -12,7 +12,7 @@ import (
 )
 
 func (s *Service) TelegramNotifier(ctx context.Context, devices map[uuid.UUID]storage.NotificationDevice) (err error) {
-	updatedDevices, err := s.st.GetAllDevices(ctx)
+	updatedDevices, err := s.GetAllDevices(ctx)
 	if err != nil {
 		return err
 	}

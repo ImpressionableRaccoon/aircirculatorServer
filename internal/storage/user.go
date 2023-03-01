@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (st *PsqlStorage) SignUp(ctx context.Context, login string, hash []byte, salt string) error {
+func (st *PsqlStorage) RegisterUser(ctx context.Context, login string, hash []byte, salt string) error {
 	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
 	defer timeoutCancel()
 

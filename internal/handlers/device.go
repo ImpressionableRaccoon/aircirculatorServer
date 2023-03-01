@@ -84,7 +84,7 @@ func (h *Handler) GetDevice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	device, err := h.s.GetDevice(r.Context(), user, deviceID)
+	device, err := h.s.GetDevice(r.Context(), user, storage.Device{ID: deviceID})
 	if errors.Is(err, storage.ErrDeviceNotFound) {
 		h.HTTPJSONError(w, err.Error(), http.StatusNotFound)
 		return

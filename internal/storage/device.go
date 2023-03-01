@@ -14,7 +14,7 @@ type AddedDevice struct {
 	Token string `json:"token"`
 }
 
-func (st *PsqlStorage) AddDevice(ctx context.Context, user User, inputDevice Device) (
+func (st *PsqlStorage) AddUserDevice(ctx context.Context, user User, inputDevice Device) (
 	device AddedDevice, err error) {
 	company, err := st.GetUserCompany(ctx, user, inputDevice.Company)
 	if err != nil {
@@ -109,7 +109,7 @@ func (st *PsqlStorage) GetDeviceByID(ctx context.Context, deviceID uuid.UUID) (d
 	return device, nil
 }
 
-func (st *PsqlStorage) AuthDevice(ctx context.Context, deviceID uuid.UUID, token string) (device Device, err error) {
+func (st *PsqlStorage) CheckDeviceAuthorization(ctx context.Context, deviceID uuid.UUID, token string) (device Device, err error) {
 	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
 	defer timeoutCancel()
 

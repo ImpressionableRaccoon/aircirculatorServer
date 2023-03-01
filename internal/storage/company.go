@@ -11,14 +11,14 @@ import (
 	"github.com/ImpressionableRaccoon/aircirculatorServer/internal/utils"
 )
 
-func (st *PsqlStorage) GetUserCompanies(ctx context.Context, user User, ignoreUser bool) (companies []Company, err error) {
+func (st *PsqlStorage) GetUserCompanies(ctx context.Context, user User) (companies []Company, err error) {
 	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
 	defer timeoutCancel()
 
 	companies = make([]Company, 0)
 
 	var rows pgx.Rows
-	if ignoreUser {
+	if user.IsAdmin {
 		rows, err = st.db.Query(timeoutCtx, "SELECT id, owner_id, name, time_offset FROM companies")
 	} else {
 		rows, err = st.db.Query(timeoutCtx,

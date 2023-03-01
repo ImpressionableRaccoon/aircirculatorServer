@@ -27,7 +27,7 @@ func (h *Handler) GetJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	journal, err := h.s.GetJournal(r.Context(), user, deviceID)
+	journal, err := h.s.GetJournalWithCheck(r.Context(), user, deviceID)
 	if errors.Is(err, storage.ErrDeviceNotFound) {
 		h.HTTPJSONError(w, err.Error(), http.StatusNotFound)
 		return

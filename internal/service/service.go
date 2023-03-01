@@ -6,14 +6,14 @@ import (
 )
 
 type Service struct {
-	st  *storage.PsqlStorage
+	*storage.PsqlStorage
 	cfg *configs.Config
 }
 
 func NewService(st *storage.PsqlStorage, cfg *configs.Config) *Service {
 	s := &Service{
-		st:  st,
-		cfg: cfg,
+		PsqlStorage: st,
+		cfg:         cfg,
 	}
 
 	return s

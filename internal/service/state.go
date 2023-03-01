@@ -14,7 +14,7 @@ func (s *Service) PushDeviceStates(ctx context.Context, device storage.Device, s
 	})
 
 	for _, state := range states {
-		err = s.st.PushDeviceState(ctx, device, state)
+		err = s.PushDeviceState(ctx, device, state)
 		if err != nil {
 			return err
 		}

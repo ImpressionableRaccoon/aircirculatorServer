@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (st *PsqlStorage) GetSchedules(ctx context.Context, device Device) (schedules []Schedule, err error) {
+func (st *PsqlStorage) GetDeviceSchedules(ctx context.Context, device Device) (schedules []Schedule, err error) {
 	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
 	defer timeoutCancel()
 
@@ -38,7 +38,7 @@ func (st *PsqlStorage) GetSchedules(ctx context.Context, device Device) (schedul
 	return
 }
 
-func (st *PsqlStorage) AddSchedules(ctx context.Context, device Device, inputSchedules []Schedule) (
+func (st *PsqlStorage) AddDeviceSchedules(ctx context.Context, device Device, inputSchedules []Schedule) (
 	schedules []Schedule, err error) {
 	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*60)
 	defer timeoutCancel()
@@ -81,7 +81,7 @@ func (st *PsqlStorage) AddSchedules(ctx context.Context, device Device, inputSch
 	return
 }
 
-func (st *PsqlStorage) DeleteSchedule(ctx context.Context, device Device, scheduleID uuid.UUID) (err error) {
+func (st *PsqlStorage) DeleteDeviceSchedule(ctx context.Context, device Device, scheduleID uuid.UUID) (err error) {
 	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, time.Second*10)
 	defer timeoutCancel()
 

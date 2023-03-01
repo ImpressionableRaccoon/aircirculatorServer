@@ -11,18 +11,18 @@ import (
 func (s *Service) GetSchedules(ctx context.Context, user storage.User, deviceID uuid.UUID) (
 	schedules []storage.Schedule, err error) {
 	inputDevice := storage.Device{ID: deviceID}
-	device, err := s.st.GetDevice(ctx, user, inputDevice)
+	device, err := s.GetDevice(ctx, user, inputDevice)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.st.GetSchedules(ctx, device)
+	return s.GetDeviceSchedules(ctx, device)
 }
 
 func (s *Service) AddSchedules(ctx context.Context, user storage.User, deviceID uuid.UUID,
 	inputSchedules []storage.Schedule) (schedules []storage.Schedule, err error) {
 	inputDevice := storage.Device{ID: deviceID}
-	device, err := s.st.GetDevice(ctx, user, inputDevice)
+	device, err := s.GetDevice(ctx, user, inputDevice)
 	if err != nil {
 		return nil, err
 	}
@@ -42,13 +42,13 @@ func (s *Service) AddSchedules(ctx context.Context, user storage.User, deviceID 
 		}
 	}
 
-	return s.st.AddSchedules(ctx, device, inputSchedules)
+	return s.AddDeviceSchedules(ctx, device, inputSchedules)
 }
 
 func (s *Service) DeleteSchedule(ctx context.Context, user storage.User, deviceID uuid.UUID, scheduleID uuid.UUID) (
 	err error) {
 	inputDevice := storage.Device{ID: deviceID}
-	device, err := s.st.GetDevice(ctx, user, inputDevice)
+	device, err := s.GetDevice(ctx, user, inputDevice)
 	if err != nil {
 		return err
 	}
@@ -57,5 +57,5 @@ func (s *Service) DeleteSchedule(ctx context.Context, user storage.User, deviceI
 		return ErrWrongScheduleID
 	}
 
-	return s.st.DeleteSchedule(ctx, device, scheduleID)
+	return s.DeleteDeviceSchedule(ctx, device, scheduleID)
 }
