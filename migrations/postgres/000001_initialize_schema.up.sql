@@ -1,11 +1,11 @@
 CREATE TABLE users
 (
-    id            uuid UNIQUE  NOT NULL DEFAULT gen_random_uuid(),
-    login         varchar(255) NOT NULL,
-    password_hash varchar(255) NOT NULL,
-    password_salt varchar(255) NOT NULL,
-    is_admin      boolean      NOT NULL DEFAULT FALSE,
-    last_online   timestamp    NOT NULL DEFAULT to_timestamp(0)
+    id            uuid UNIQUE         NOT NULL DEFAULT gen_random_uuid(),
+    login         varchar(255) UNIQUE NOT NULL,
+    password_hash bytea               NOT NULL,
+    password_salt varchar(255)        NOT NULL,
+    is_admin      boolean             NOT NULL DEFAULT FALSE,
+    last_online   timestamp           NOT NULL DEFAULT to_timestamp(0)
 );
 
 CREATE TABLE companies
